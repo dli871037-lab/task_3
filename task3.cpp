@@ -13,13 +13,10 @@ int main()
 {
 
     double tempIn, tempOver, wideIn, wideOver,
-        lambdaIn, lambdaOver, tempCoordinates,
-        wallCoordinates, finishStep, thermalConductanceIn,
-        thermalConductanceOver;
-
-
-    int step;      // текущий шаг изменения температуры, °C
-
+           lambdaIn, lambdaOver, tempCoordinates,
+           wallCoordinates, finishStep, thermalConductanceIn,
+           thermalConductanceOver, step, temperatureBetween;
+      
     cout << "Inner wall temperature, C: ";
     cin >> tempIn;
     cout << "Outer wall temperature, C: ";
@@ -34,52 +31,67 @@ int main()
     cin >> lambdaOver;
 
     // проводимость 1-го слоя
-    thermalConductanceIn = lambdaIn / wideIn;         
+    thermalConductanceIn = lambdaIn / wideIn;    
+
     // проводимость 2-го слоя
     thermalConductanceOver = lambdaOver / wideOver;   
-    // Температура на границе слоёв
-    double temperatureBetween = (thermalConductanceIn * tempIn + thermalConductanceOver * tempOver) /
-        (thermalConductanceIn + thermalConductanceOver);
 
-    cout << fixed << setprecision(3)    // 3 цифры после точки
+    // Температура на границе слоёв
+    temperatureBetween = (thermalConductanceIn * tempIn + thermalConductanceOver * tempOver) /
+                         (thermalConductanceIn + thermalConductanceOver);
+
+    // 3 цифры после точки и вывод 
+    cout << fixed << setprecision(3)    
          << "Temperature at the layer interface: " << temperatureBetween << endl 
          << "    t         x" << endl;
 
+    // шаг первого цикла
+    step = 100.0;
 
-    step = 100;            // шаг первого цикла
-    finishStep = 300;      // граница: 1-й цикл работает пока t > 300
-    tempCoordinates = 500; // стартовая температура для 1-го цикла
+    // граница: 1-й цикл работает пока t > 300
+    finishStep = 300.0;
+
+    // стартовая температура для 1-го цикла
+    tempCoordinates = 500.0; 
 
     while (tempCoordinates > finishStep)
     {
-        if (tempCoordinates > temperatureBetween)
-            wallCoordinates = (tempCoordinates - tempIn) /
-            (temperatureBetween - tempIn) * wideIn;
-        else
-            wallCoordinates = (tempCoordinates - temperatureBetween) /
-            (tempOver - temperatureBetween) * wideOver + wideIn;
-
-        cout << setw(5) << tempCoordinates                  // setw(5) для красивого вывода
-             << setw(10) << wallCoordinates / 100 << endl;   // делим на 100 переводя в метры
+        if (tempCoordinates > temperatureBetween) {
+            wallCoordinates = (tempCoordinates - tempIn) / (temperatureBetween - tempIn) * wideIn;
+        }
+            
+        else {
+            wallCoordinates = (tempCoordinates - temperatureBetween) / (tempOver - temperatureBetween) * wideOver + wideIn;
+        }
+        
+        // setw(5) для красивого вывода (будет выводится только первые 5 цифр) и делим координаты на 100, переводя в метры
+        cout << setw(5) << tempCoordinates                  
+             << setw(10) << wallCoordinates / 100.0 << endl;  
+        
         tempCoordinates -= step;
     }
 
-    step = 100;            // шаг 2-го цикла
-    tempCoordinates = 250; // старт 2-го цикла
+    // шаг 2-го цикла
+    step = 100.0;
+
+    // старт 2-го цикла            
+    tempCoordinates = 250.0; 
 
     do
     {
-        if (tempCoordinates > temperatureBetween)
-            wallCoordinates = (tempCoordinates - tempIn) /
-            (temperatureBetween - tempIn) * wideIn;
-        else
-            wallCoordinates = (tempCoordinates - temperatureBetween) /
-            (tempOver - temperatureBetween) * wideOver + wideIn;
-
+        if (tempCoordinates > temperatureBetween) {
+            wallCoordinates = (tempCoordinates - tempIn) / (temperatureBetween - tempIn) * wideIn;
+        }
+            
+        else {
+            wallCoordinates = (tempCoordinates - temperatureBetween) / (tempOver - temperatureBetween) * wideOver + wideIn;
+        }
+        // выводим первые 5 цифр у температуры и первые 10 у координат, также переводим координаты в метры
         cout << setw(5) << tempCoordinates
-            << setw(10) << wallCoordinates / 100 << endl;   // делим на 100 переводя в метры
+             << setw(10) << wallCoordinates / 100.0 << endl;  
+        
         tempCoordinates -= step;
-    } while (tempCoordinates >= 150);
+    } while (tempCoordinates >= 150.0);
 
     return 0;
 }
