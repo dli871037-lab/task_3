@@ -11,37 +11,35 @@ using namespace std;
 
 int main() {
 
-  double tempIn, tempOver, wideIn, wideOver,
-         lambdaIn, lambdaOver, tempCoordinates,
-         wallCoordinates, finishStep, thermalConductanceIn,
-         thermalConductanceOver, step, temperatureBetween;
+  constexpr int countOfSymbols1 = 5;
+  constexpr int countOfSymbols2 = 10;
+  constexpr int countOfDigitsAfterPoint = 3;
+
+  double t1, t2, wide1, wide2, lambda1, lambda2, tempCoord,
+         wallCoord, finishStep, thermalCond1, thermalCond2, step, t_c;
       
   cout << "Inner wall temperature, C: ";
-  cin >> tempIn;
+  cin >> t1;
   cout << "Outer wall temperature, C: ";
-  cin >> tempOver;
+  cin >> t2;
   cout << "Inner layer thickness, centimeters: ";
-  cin >> wideIn;
+  cin >> wide1;
   cout << "Outer layer thickness, centimeters: ";
-  cin >> wideOver;
+  cin >> wide2;
   cout << "Inner layer thermal conductivity: ";
-  cin >> lambdaIn;
+  cin >> lambda1;
   cout << "Outer layer thermal conductivity: ";
-  cin >> lambdaOver;
+  cin >> lambda2;
 
-  // проводимость 1-го слоя
-  thermalConductanceIn = lambdaIn / wideIn;    
+  thermalCond1 = lambda1 / wide1;    
 
-  // проводимость 2-го слоя
-  thermalConductanceOver = lambdaOver / wideOver;   
+  thermalCond2 = lambda2 / wide2;   
 
-  // Температура на границе слоёв
-  temperatureBetween = (thermalConductanceIn * tempIn + thermalConductanceOver * tempOver) /
-                       (thermalConductanceIn + thermalConductanceOver);
+  t_c = (thermalCond1 * t1 + thermalCond2 * t2) / (thermalCond1 + thermalCond2);
 
   // 3 цифры после точки и вывод 
-  cout << fixed << setprecision(3)    
-       << "Temperature at the layer interface: " << temperatureBetween << endl 
+  cout << setprecision(countOfDigitsAfterPoint)
+       << "Temperature at the layer interface: " << t_c << endl 
        << "    t         x" << endl;
 
   // шаг первого цикла
@@ -51,47 +49,42 @@ int main() {
   finishStep = 300.0;
 
   // стартовая температура для 1-го цикла
-  tempCoordinates = 500.0; 
+  tempCoord = 500.0; 
 
-  while (tempCoordinates > finishStep) {
+  while (tempCoord > finishStep) {
  
-    if (tempCoordinates > temperatureBetween) {
-      wallCoordinates = (tempCoordinates - tempIn) / (temperatureBetween - tempIn) * wideIn;
-    }
-            
-    else {
-      wallCoordinates = (tempCoordinates - temperatureBetween) / (tempOver - temperatureBetween) * wideOver + wideIn;
+    if (tempCoord > t_c) {
+      wallCoord = (tempCoord - t1) / (t_c - t1) * wide1;
+    } else {
+      wallCoord = (tempCoord - t_c) / (t2 - t_c) * wide2 + wide1;
     }
         
-    // setw(5) для красивого вывода (будет выводится только первые 5 цифр) и делим координаты на 100, переводя в метры
-    cout << setw(5) << tempCoordinates                  
-         << setw(10) << wallCoordinates / 100.0 << endl;  
+    // setw() для следующего вывода выделяем необходимое число символов
+    cout << setw(countOfSymbols1) << tempCoord
+         << setw(countOfSymbols2) << wallCoord / 100.0 << endl;
         
-    tempCoordinates -= step;
+    tempCoord -= step;
   }
 
   // шаг 2-го цикла
   step = 100.0;
 
   // старт 2-го цикла            
-  tempCoordinates = 250.0; 
+  tempCoord = 250.0; 
 
   do {
 
-    if (tempCoordinates > temperatureBetween) {
-      wallCoordinates = (tempCoordinates - tempIn) / (temperatureBetween - tempIn) * wideIn;
-    }
-            
-    else {
-      wallCoordinates = (tempCoordinates - temperatureBetween) / (tempOver - temperatureBetween) * wideOver + wideIn;
+    if (tempCoord > t_c) {
+      wallCoord = (tempCoord - t1) / (t_c - t1) * wide1;
+    } else {
+      wallCoord = (tempCoord - t_c) / (t2 - t_c) * wide2 + wide1;
     }
 
-    // выводим первые 5 цифр у температуры и первые 10 у координат, также переводим координаты в метры
-    cout << setw(5) << tempCoordinates
-         << setw(10) << wallCoordinates / 100.0 << endl;  
+    cout << setw(countOfSymbols1) << tempCoord
+         << setw(countOfSymbols2) << wallCoord / 100.0 << endl;
         
-    tempCoordinates -= step;
-  } while (tempCoordinates >= 150.0);
+    tempCoord -= step;
+  } while (tempCoord >= 150.0);
 
-    return 0;
+  return 0;
 }
